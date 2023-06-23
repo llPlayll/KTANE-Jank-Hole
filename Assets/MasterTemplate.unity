@@ -341,10 +341,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
-    - target: {fileID: 1263069032743614, guid: 9a4a07b69220d4144b27517312a49793, type: 2}
-      propertyPath: m_Name
-      value: Boing
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 9a4a07b69220d4144b27517312a49793, type: 2}
   m_IsPrefabParent: 0
