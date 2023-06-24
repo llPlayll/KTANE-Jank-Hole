@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 114848120511536268}
   - component: {fileID: 114617884380056244}
   - component: {fileID: 114641285877887362}
-  - component: {fileID: 114447111245199326}
   m_Layer: 0
   m_Name: TestHarness
   m_TagString: Untagged
@@ -19216,43 +19215,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShaderNames:
   - Legacy Shaders/Diffuse
---- !u!114 &114447111245199326
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 101964}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e42de117a0e0fee45a734471e2694817, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  StatusLightPrefab: {fileID: 0}
-  TimerModulePrefab: {fileID: 0}
-  StrikelessTimerModulePrefab: {fileID: 0}
-  ModuleCoverPrefab: {fileID: 0}
-  ModuleFoamBacking: {fileID: 0}
-  TwitchIDPrefab: {fileID: 0}
-  NeedyTimerPrefab: {fileID: 0}
-  SerialNumberWidget: {fileID: 0}
-  BatteryWidget: {fileID: 0}
-  PortWidget: {fileID: 0}
-  IndicatorWidget: {fileID: 0}
-  TwoFactorWidget: {fileID: 0}
-  CustomWidget: {fileID: 0}
-  HighlightPrefab: {fileID: 0}
-  AudioVolume: 0.25
-  AudioClips: []
-  StrikeCount: 3
-  TimeLimit: 600
-  BombSize: 1
-  FrontFaceOnly: 0
-  EdgeworkConfiguration: {fileID: 0}
-  TwitchPlaysActive: 1
-  TwitchPlaysMode: 0
-  turnSpeed: 128
-  panSpeed: 4
-  zoomSpeed: 16
 --- !u!114 &114452657392888046
 MonoBehaviour:
   m_ObjectHideFlags: 1
