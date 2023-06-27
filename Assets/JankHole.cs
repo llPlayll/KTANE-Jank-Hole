@@ -21,14 +21,13 @@ public class JankHole : MonoBehaviour
     private bool ModuleSolved;
 
     string alphabet = "ZABCDEFGHIJKLMNOPQRSTUVWXY";
-    List<Color> colorList = new List<Color> { Color.red, Color.green, Color.blue, Color.cyan, Color.magenta, Color.yellow, Color.white };
     List<string> shortColorNames = new List<string> { "R", "G", "B", "C", "M", "Y", "W" };
     List<string> fullColorNames = new List<string> { "Red", "Green", "Blue", "Cyan", "Magenta", "Yellow", "White" };
 
     string X, Y, Z;
-    int[] colorIndexesArray = new int[11];
+    int[] colorIndexesArray = new int[10];
 
-    int colorSequenceLength = 10;
+    int colorSequenceLength = 9;
 
     void Awake()
     {
@@ -40,7 +39,6 @@ public class JankHole : MonoBehaviour
         ColorBlindText.gameObject.SetActive(Colorblind.ColorblindModeActive);
         CalculateGoalLetters();
         GenerateColors();
-        HoleRenderer.material.color = colorList[colorIndexesArray[0]];
 
         Module.OnActivate += ModuleOnActivate;
     }
@@ -83,14 +81,14 @@ public class JankHole : MonoBehaviour
     void GenerateColors()
     {
         int generatedColorIndex;
-        int previousGeneratedIndex = colorList.Count;
+        int previousGeneratedIndex = shortColorNames.Count;
         string colorLog = "";
         for (int i = 0; i < colorSequenceLength + 1; i++)
         {
-            generatedColorIndex = Rnd.Range(0, colorList.Count);
+            generatedColorIndex = Rnd.Range(0, shortColorNames.Count);
             while (generatedColorIndex == previousGeneratedIndex)
             {
-                generatedColorIndex = Rnd.Range(0, colorList.Count);
+                generatedColorIndex = Rnd.Range(0, shortColorNames.Count);
             }
             colorIndexesArray[i] = generatedColorIndex;
             previousGeneratedIndex = generatedColorIndex;
