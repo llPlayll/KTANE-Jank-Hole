@@ -131,11 +131,11 @@ public class JankHole : MonoBehaviour
             }
             if (!String.IsNullOrEmpty(KeyA))
             {
-                Log($"Key A, Applied the {fullColorNames[currentColor]} color, Key A is now {KeyA}");
+                Log($"Key A, Applied the {fullColorNames[currentColor]} color, Key A is now {KeyA}.");
             }
             else
             {
-                Log($"Key A, Applied the {fullColorNames[currentColor]} color, Key A is now \"\"");
+                Log($"Key A, Applied the {fullColorNames[currentColor]} color, Key A is now \"\".");
             }    
         }
         for (int i = 5; i < 10; i++)
@@ -190,11 +190,11 @@ public class JankHole : MonoBehaviour
             }
             if (!String.IsNullOrEmpty(KeyB))
             {
-                Log($"Key B, Applied the {fullColorNames[currentColor]} color, Key B is now {KeyB}");
+                Log($"Key B, Applied the {fullColorNames[currentColor]} color, Key B is now {KeyB}.");
             }
             else
             {
-                Log($"Key B, Applied the {fullColorNames[currentColor]} color, Key B is now \"\"");
+                Log($"Key B, Applied the {fullColorNames[currentColor]} color, Key B is now \"\".");
             }
         }
 
@@ -219,8 +219,17 @@ public class JankHole : MonoBehaviour
                 KeyB += TempKB[i];
             }
         }
+        Log($"After adding the alphabet and only keeping first occurrences of letters in each key, Key A is {KeyA} and Key B is {KeyB}.");
 
-        Log($"After doing all modifications, Key A is {KeyA} and Key B is {KeyB}");
+        for (int i = 0; i < 26; i++)
+        {
+            if (KeyA[i] == KeyB[i])
+            {
+                KeyB = KeyB.Substring(0, i) + alphabet[(alphabet.IndexOf(KeyB[i].ToString()) + 1) % 26] + KeyB.Substring(i + 1);
+                Log($"Found duplicate letter {KeyA[i]} at position {i + 1}, new Key B is {KeyB}.");
+            }
+        }
+        Log($"Final Key A and Key B are {KeyA} and {KeyB}.");
     }
 
     void GenerateColors()
