@@ -1,0 +1,10 @@
+{
+  "name": "jankHole-Editor",
+  "references": [
+    "jankHole"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": []
+}

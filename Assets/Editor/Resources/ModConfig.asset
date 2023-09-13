@@ -11,10 +11,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 615501dbe4f3fe94fbf4b564abb10237, type: 3}
   m_Name: ModConfig
   m_EditorClassIdentifier: 
-  id: 
-  title: 
-  author: 
-  description: 
-  version: 
+  id: jankHole
+  title: Jank Hole
+  author: _Play_
+  description: 'FLAVOR TEXT
+
+
+    Jank Hole!
+
+
+    Developed by _Play_.'
+  version: 1
   outputFolder: build
   previewImage: {fileID: 0}
