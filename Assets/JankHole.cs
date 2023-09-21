@@ -12,8 +12,10 @@ public class JankHole : MonoBehaviour
     [SerializeField] private KMBombInfo Bomb;
     [SerializeField] private KMColorblindMode Colorblind;
 
+    [SerializeField] private KMSelectable JankHoleSelectable;
     [SerializeField] private MeshRenderer HoleRenderer;
     [SerializeField] private TextMesh ColorBlindText;
+    [SerializeField] private TextMesh InputText;
     [SerializeField] private List<Material> JankHoleMaterials;
 
     static int ModuleIdCounter = 1;
@@ -25,24 +27,60 @@ public class JankHole : MonoBehaviour
     List<string> fullColorNames = new List<string> { "Red", "Green", "Blue", "Cyan", "Magenta", "Yellow", "White" };
 
     string X, Y, Z;
-    string KeyA, KeyB = "";
+    string KeyA, KeyB;
+    string SolutionCode;
+    List<string> BinaryGrid = new List<string>() { "", "", "" };
+    List<string> ZerosGrid = new List<string>() { "", "", "" };
+    List<string> OnesGrid = new List<string>() { "", "", "" };
     int[] colorIndexesArray = new int[10];
 
-    int colorSequenceLength = 9;
+    string input;
+    int digitsEntered;
+
+    private int lastSolved;
+    bool isReadyForSkip;
+
+    bool colorSequenceBreak;
+    int globalColorSequenceIdx;
 
     void Awake()
     {
         ModuleId = ModuleIdCounter++;
+        JankHoleSelectable.OnInteract += delegate () { HoleOnInteract(); return false; };
+        JankHoleSelectable.OnInteractEnded += delegate () { HoleOnInteractEnded(); };
     }
 
     void Start()
     {
         ColorBlindText.gameObject.SetActive(Colorblind.ColorblindModeActive);
+
         GenerateColors();
         CalculateGoalLetters();
         CalculateKeys();
+        CreateGrids();
+        GenerateSolution();
 
         Module.OnActivate += ModuleOnActivate;
+    }
+
+    void HoleOnInteract()
+    {
+        if (ModuleSolved)
+        {
+            return;
+        }
+        JankHoleSelectable.AddInteractionPunch();
+        input += "[";
+    }
+
+    void HoleOnInteractEnded()
+    {
+        if (ModuleSolved)
+        {
+            return;
+        }
+        JankHoleSelectable.AddInteractionPunch();
+        input += "]";
     }
 
     void CalculateGoalLetters()
@@ -232,12 +270,75 @@ public class JankHole : MonoBehaviour
         Log($"Final Key A and Key B are {KeyA} and {KeyB}.");
     }
 
+    void CreateGrids()
+    {
+        BinaryGrid[0] = LetterToBinaryMorse(X);
+        BinaryGrid[1] = LetterToBinaryMorse(Y);
+        BinaryGrid[2] = LetterToBinaryMorse(Z);
+
+        int maxLength = new[] { BinaryGrid[0].Length, BinaryGrid[1].Length, BinaryGrid[2].Length }.Max();
+
+        BinaryGrid[0] += new string ('0', (maxLength - BinaryGrid[0].Length));
+        BinaryGrid[1] += new string ('0', (maxLength - BinaryGrid[1].Length));
+        BinaryGrid[2] += new string ('0', (maxLength - BinaryGrid[2].Length));
+
+        Log($"Binary grid rows are {BinaryGrid[0]} {BinaryGrid[1]} and {BinaryGrid[2]}.");
+
+        int binaryGridSize = maxLength * 3;
+
+        string TempKA = KeyA;
+        while (TempKA.Length < binaryGridSize)
+        {
+            TempKA += KeyA;
+        }
+        ZerosGrid[0] = TempKA.Substring(0, maxLength);
+        ZerosGrid[1] = TempKA.Substring(maxLength, maxLength);
+        ZerosGrid[2] = TempKA.Substring(maxLength * 2, maxLength);
+
+        Log($"Zeros grid rows are {ZerosGrid[0]} {ZerosGrid[1]} and {ZerosGrid[2]}.");
+
+        string TempKB = KeyB;
+        while (TempKB.Length < binaryGridSize)
+        {
+            TempKB += KeyB;
+        }
+        OnesGrid[0] = TempKB.Substring(0, maxLength);
+        OnesGrid[1] = TempKB.Substring(maxLength, maxLength);
+        OnesGrid[2] = TempKB.Substring(maxLength * 2, maxLength);
+
+        Log($"Ones grid rows are {OnesGrid[0]} {OnesGrid[1]} and {OnesGrid[2]}.");
+    }
+
+    void GenerateSolution()
+    {
+        for (int i = 0; i < BinaryGrid[0].Length; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                if (BinaryGrid[j][i] == '0')
+                {
+                    SolutionCode += ZerosGrid[j][i];
+                }
+                else
+                {
+                    SolutionCode += OnesGrid[j][i];
+                }
+            }
+        }
+        Log($"The full solution code is {SolutionCode}.");
+        if (SolutionCode.Length > 8)
+        {
+            SolutionCode = SolutionCode.Substring(0, 8);
+            Log($"The solution code will be cut to finally be {SolutionCode}.");
+        }
+    }
+
     void GenerateColors()
     {
         int generatedColorIndex;
         int previousGeneratedIndex = shortColorNames.Count;
         string colorLog = "";
-        for (int i = 0; i < colorSequenceLength + 1; i++)
+        for (int i = 0; i < 10; i++)
         {
             generatedColorIndex = Rnd.Range(0, shortColorNames.Count);
             while (generatedColorIndex == previousGeneratedIndex)
@@ -247,11 +348,11 @@ public class JankHole : MonoBehaviour
             colorIndexesArray[i] = generatedColorIndex;
             previousGeneratedIndex = generatedColorIndex;
             colorLog += fullColorNames[colorIndexesArray[i]];
-            if (i < colorSequenceLength - 1)
+            if (i < 8)
             {
                 colorLog += ", ";
             }
-            else if (i == colorSequenceLength - 1)
+            else if (i == 8)
             {
                 colorLog += " and ";
             }
@@ -261,6 +362,130 @@ public class JankHole : MonoBehaviour
             }
         }
         Log($"Generated color sequence is: {colorLog}");
+    }
+
+    string LetterToBinaryMorse(string letter)
+    {
+        switch (letter)
+        {
+            case "A":
+                return "10111";
+            case "B":
+                return "111010101";
+            case "C":
+                return "11101011101";
+            case "D":
+                return "1110101";
+            case "E":
+                return "1";
+            case "F":
+                return "101011101";
+            case "G":
+                return "111011101";
+            case "H":
+                return "1010101";
+            case "I":
+                return "101";
+            case "J":
+                return "1011101110111";
+            case "K":
+                return "111010111";
+            case "L":
+                return "101110101";
+            case "M":
+                return "1110111";
+            case "N":
+                return "11101";
+            case "O":
+                return "11101110111";
+            case "P":
+                return "10111011101";
+            case "Q":
+                return "1110111010111";
+            case "R":
+                return "1011101";
+            case "S":
+                return "10101";
+            case "T":
+                return "111";
+            case "U":
+                return "1010111";
+            case "V":
+                return "101010111";
+            case "W":
+                return "101110111";
+            case "X":
+                return "11101010111";
+            case "Y":
+                return "1110101110111";
+            case "Z":
+                return "11101110101";
+            default:
+                return "";
+        }
+    }
+
+    string GestureToLetter(string gesture)
+    {
+        switch (gesture)
+        {
+            case "[][pp]":
+                return "A";
+            case "[pp]p[][]":
+                return "B";
+            case "[][]":
+                return "C";
+            case "[pp][]p[]":
+                return "D";
+            case "[]p[][]p[]":
+                return "E";
+            case "[]p[pp][]":
+                return "F";
+            case "[]p[pp]":
+                return "G";
+            case "[][]p[p]":
+                return "H";
+            case "[][p]p[][]":
+                return "I";
+            case "[p]p[]":
+                return "J";
+            case "[p]p[][]":
+                return "K";
+            case "[]p[][]":
+                return "L";
+            case "[][]p[][]":
+                return "M";
+            case "[p][]p[][]":
+                return "N";
+            case "[]p[]p[]p[]":
+                return "O";
+            case "[][]p[]p[]":
+                return "P";
+            case "[][]p[]":
+                return "Q";
+            case "[]p[][pp]":
+                return "R";
+            case "[]p[]p[][]":
+                return "S";
+            case "[][p]":
+                return "T";
+            case "[]p[]p[p]":
+                return "U";
+            case "[][p][]":
+                return "V";
+            case "[]p[p][]":
+                return "W";
+            case "[p][]":
+                return "X";
+            case "[p][]p[]":
+                return "Y";
+            case "[]p[]p[]":
+                return "Z";
+            case "[ppp]":
+                return digitsEntered.ToString();
+            default:
+                return "?";
+        }
     }
 
     void Log(string arg)
@@ -340,22 +565,155 @@ public class JankHole : MonoBehaviour
         return key;
     }
 
+    void checkInput()
+    {
+        string enteredLetter = GestureToLetter(input);
+        InputText.text = enteredLetter;
+        if (enteredLetter == "?")
+        {
+            Log($"Submitted gesture is invalid, strike!");
+            Module.HandleStrike();
+        }
+        else if (alphabet.Contains(enteredLetter))
+        {
+            if (SolutionCode[0].ToString() == enteredLetter)
+            {
+                SolutionCode = SolutionCode.Substring(1);
+                digitsEntered++;
+                if (SolutionCode.Length > 0)
+                {
+                    Log($"Submitted letter {enteredLetter} is correct, new solution code is {SolutionCode}.");
+                    isReadyForSkip = true;
+                }
+                else
+                {
+                    Log($"Submitted letter {enteredLetter} is correct, all letters were entered, module solved!");
+                    ModuleSolved = true;
+                    Module.HandlePass();
+                    StopCoroutine("ColorCycle");
+                    InputText.text = "";
+                }
+            }
+            else
+            {
+                Log($"Submitted letter {enteredLetter} is incorrect, strike!");
+                Module.HandleStrike();
+            }
+        }
+        else
+        {
+            Log($"The gesture [ppp] was entered, showing the number of letters that was entered, which is {digitsEntered}");
+        }
+    }
+
     IEnumerator ColorCycle()
     {
-        int currentIndex = -1;
         while (true)
         {
             for (int i = 0; i < colorIndexesArray.Length; ++i)
             {
-                currentIndex = i;
+                globalColorSequenceIdx = i;
                 HoleRenderer.material = JankHoleMaterials[colorIndexesArray[i]];
                 ColorBlindText.text = shortColorNames[colorIndexesArray[i]];
+                if (!String.IsNullOrEmpty(input))
+                {
+                    input += "p";
+                }
                 yield return new WaitForSeconds(1);
             }
-            currentIndex = -1;
+            colorSequenceBreak = true;
             HoleRenderer.material = JankHoleMaterials[7];
             ColorBlindText.text = "";
+            if (!String.IsNullOrEmpty(input))
+            {
+                input = input.Trim('p');
+                Log($"Submitted {input}, checking submission.");
+                checkInput();
+                input = "";
+            }
             yield return new WaitForSeconds(2);
+            InputText.text = "";
+            colorSequenceBreak = false;
+        }
+    }
+
+    private void Update()
+    {
+        var solvedCount = Bomb.GetSolvedModuleNames().Where(x=>x != "Jank Hole").Count();
+        if (solvedCount != lastSolved)
+        {
+            lastSolved = solvedCount;
+            if (isReadyForSkip)
+            {
+                isReadyForSkip = false;
+                if (SolutionCode.Length > 3)
+                {
+                    digitsEntered += 3;
+                    SolutionCode = SolutionCode.Substring(3);
+                    Log($"A module has been solved in between entering letters, skipping next 3 letters, new solution code is {SolutionCode}");
+                }
+                else
+                {
+                    digitsEntered += 3 - (SolutionCode.Length - 1);
+                    SolutionCode = SolutionCode.Substring(SolutionCode.Length - 1);
+                    Log($"A module has been solved in between entering letters, skipping to the last letter as the solution code is less than 3 letters long, new solution code is {SolutionCode}");
+                }
+            }
+        }
+    }
+#pragma warning disable 414
+    private readonly string TwitchHelpMessage = @"Use !{0} [/p/] to execute a gesture, where a [ is a press, a p is waiting for a color switch, and ] is a release.";
+#pragma warning restore 414
+
+    IEnumerator ProcessTwitchCommand(string Command)
+    {
+        if (Command.Replace("p", "").Replace("[", "").Replace("]", "") != "")
+        {
+            yield return "sendtochaterror Invalid command!";
+        }
+        
+        int squareBrackets = 0;
+        for (int i = 0; i < Command.Length; i++)
+        {
+            if (Command[i] == '[')
+            {
+                squareBrackets++;
+            }
+            else if (Command[i] == ']')
+            {
+                squareBrackets--;
+            }
+        }
+        if (squareBrackets != 0)
+        {
+            yield return "sendtochaterror Invalid gesture: more holds than releases / more releases than holds!";
+        }
+
+        Command = Command.TrimStart('p').TrimEnd('p');
+        if (Command.Count(p => p == 'p') > 10)
+        {
+            yield return "sendtochaterror Invalid gesture: too many color switches!";
+        }
+
+        yield return null;
+        yield return new WaitUntil(() => colorSequenceBreak);
+        for (int i = 0; i < Command.Length; i++)
+        {
+            switch (Command[i].ToString())
+            {
+                case "[":
+                    JankHoleSelectable.OnInteract();
+                    break;
+                case "]":
+                    JankHoleSelectable.OnInteractEnded();
+                    break;
+                case "p":
+                    int startIdx = globalColorSequenceIdx;
+                    yield return new WaitUntil(() => startIdx != globalColorSequenceIdx);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }
