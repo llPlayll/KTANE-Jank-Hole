@@ -16,6 +16,7 @@ public class JankHole : MonoBehaviour
     [SerializeField] private MeshRenderer HoleRenderer;
     [SerializeField] private TextMesh ColorBlindText;
     [SerializeField] private TextMesh InputText;
+    [SerializeField] private TextMesh DebugInputText;
     [SerializeField] private List<Material> JankHoleMaterials;
 
     static int ModuleIdCounter = 1;
@@ -41,6 +42,7 @@ public class JankHole : MonoBehaviour
     bool isReadyForSkip;
 
     bool colorSequenceBreak;
+    bool TPCommandOver;
     int globalColorSequenceIdx;
 
     void Awake()
@@ -174,7 +176,7 @@ public class JankHole : MonoBehaviour
             else
             {
                 Log($"Key A, Applied the {fullColorNames[currentColor]} color, Key A is now \"\".");
-            }    
+            }
         }
         for (int i = 5; i < 10; i++)
         {
@@ -278,9 +280,9 @@ public class JankHole : MonoBehaviour
 
         int maxLength = new[] { BinaryGrid[0].Length, BinaryGrid[1].Length, BinaryGrid[2].Length }.Max();
 
-        BinaryGrid[0] += new string ('0', (maxLength - BinaryGrid[0].Length));
-        BinaryGrid[1] += new string ('0', (maxLength - BinaryGrid[1].Length));
-        BinaryGrid[2] += new string ('0', (maxLength - BinaryGrid[2].Length));
+        BinaryGrid[0] += new string('0', (maxLength - BinaryGrid[0].Length));
+        BinaryGrid[1] += new string('0', (maxLength - BinaryGrid[1].Length));
+        BinaryGrid[2] += new string('0', (maxLength - BinaryGrid[2].Length));
 
         Log($"Binary grid rows are {BinaryGrid[0]} {BinaryGrid[1]} and {BinaryGrid[2]}.");
 
@@ -488,11 +490,72 @@ public class JankHole : MonoBehaviour
         }
     }
 
+    string LetterToGesture(string letter)
+    {
+        switch (letter)
+        {
+            case "A":
+                return "[][pp]";
+            case "B":
+                return "[pp]p[][]";
+            case "C":
+                return "[][]";
+            case "D":
+                return "[pp][]p[]";
+            case "E":
+                return "[]p[][]p[]";
+            case "F":
+                return "[]p[pp][]";
+            case "G":
+                return "[]p[pp]";
+            case "H":
+                return "[][]p[p]";
+            case "I":
+                return "[][p]p[][]";
+            case "J":
+                return "[p]p[]";
+            case "K":
+                return "[p]p[][]";
+            case "L":
+                return "[]p[][]";
+            case "M":
+                return "[][]p[][]";
+            case "N":
+                return "[p][]p[][]";
+            case "O":
+                return "[]p[]p[]p[]";
+            case "P":
+                return "[][]p[]p[]";
+            case "Q":
+                return "[][]p[]";
+            case "R":
+                return "[]p[][pp]";
+            case "S":
+                return "[]p[]p[][]";
+            case "T":
+                return "[][p]";
+            case "U":
+                return "[]p[]p[p]";
+            case "V":
+                return "[][p][]";
+            case "W":
+                return "[]p[p][]";
+            case "X":
+                return "[p][]";
+            case "Y":
+                return "[p][]p[]";
+            case "Z":
+                return "[]p[]p[]";
+            default:
+                return "";
+        }
+    }
+
     void Log(string arg)
     {
         Debug.Log($"[Jank Hole #{ModuleId}] {arg}");
     }
-	
+
     void ModuleOnActivate()
     {
         StartCoroutine("ColorCycle");
@@ -545,7 +608,7 @@ public class JankHole : MonoBehaviour
         Array.Reverse(charArray);
         return new string(charArray);
     }
-    
+
     string AppendIndicators(string key, bool lit)
     {
         List<string> indicatorList = new List<string>();
@@ -639,7 +702,8 @@ public class JankHole : MonoBehaviour
 
     private void Update()
     {
-        var solvedCount = Bomb.GetSolvedModuleNames().Where(x=>x != "Jank Hole").Count();
+        DebugInputText.text = input;
+        var solvedCount = Bomb.GetSolvedModuleNames().Where(x => x != "Jank Hole").Count();
         if (solvedCount != lastSolved)
         {
             lastSolved = solvedCount;
@@ -671,7 +735,7 @@ public class JankHole : MonoBehaviour
         {
             yield return "sendtochaterror Invalid command!";
         }
-        
+
         int squareBrackets = 0;
         for (int i = 0; i < Command.Length; i++)
         {
