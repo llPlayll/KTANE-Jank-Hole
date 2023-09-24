@@ -26,7 +26,7 @@
                 <span class="page-header-section-title">Jank Hole</span>
             </div>
             <div class="page-content">
-                <img src="img/Component/Black Hole.svg" class="diagram">
+                <img src="img/Component/Black Hole.svg" class="diagram"> <!--Should be replaced with the actual BH svg as there is no real visual diferrence between this module and BH.-->
                 <h2>On the Subject of Jank Hole</h2>
                 <p class="flavour-text">Holeker.</p>
 
@@ -41,8 +41,8 @@
                 </p>
 
                 <p>
-                    In this module, when doing operations with letters, use their alphabetic position, where Z = 0, A = 1, B = 2... Y = 25.
-                    Same with converting numbers to letters.
+                    In this module, when doing operations with letters, use their alphabetic positions, where Z = 0, A = 1, B = 2... Y = 25,
+                    same with converting numbers to letters.
                 </p>
 
                 <p>
@@ -62,7 +62,7 @@
                 <p>
                     Then, figure out the two keys: <b>Key A</b> and <b>Key B</b>, using the color sequence and the table below.
                     For <b>Key A</b>, use the first 5 colors of the sequence in order, for <b>Key B</b> use the last 5 colors in order.
-                    Both of the Keys start as empty strings and the table will add letters to them or modify them.
+                    Both of the Keys start as empty strings and the table will add letters to them or modify the keys.
                     First, figure out <b>Key A</b>, then figure out <b>Key B</b>, as <b>Key A</b> may be used in calculating <b>Key B</b>.
                 </p>
             </div>
@@ -135,7 +135,8 @@
                 <p>
                     Then, go through both of the keys left to right at the same time.
                     If the current letters from both of the keys are the same,
-                    add 1 to <b>Key B</b>'s letter, looping back to Z at 26. These are your final <b>Key A</b> and <b>Key B</b>.
+                    add 1 to <b>Key B</b>'s letter at the current position, looping back to Z at 26.
+                    These are your final <b>Key A</b> and <b>Key B</b>.
                 </p>
                 <p>
                     Next, use your goal letters to create a binary grid, which will always have 3 rows.
@@ -158,7 +159,7 @@
                     looping back to the start of the key when reaching the end.
                 </p>
                 <p>
-                    The Jank Hole will submit letters in braille order (Going through each column top to bottom, left to right).
+                    The Jank Hole will submit letters in braille reading order (Going through each column top to bottom, left to right).
                     Refer to <a href="https://ktane.timwi.de/HTML/Supermassive%20Black%20Hole.html#bhAB-table">"Appendix - BHSCII Table"</a> for how to enter letters.
                     In the table,
                     a dot means a color switch in the sequence,
@@ -188,7 +189,8 @@
                     Submit letters to recreate the binary grid.
                     Submitting a 1 while the number at the current position in the binary grid is a 0, and vice versa,
                     will also make the module strike, otherwise the module will accept the input.
-                    The module will be solved once the correct letter is submitted for the last position of the binary grid.
+                    The letters you need to submit for each position of the binary grid in braille reading order will form the <b>Solution Code</b>.
+                    The module will be solved once the correct letter is submitted for the <b>8th</b> position of the <b>Solution Code</b>.
                 </p>
                 <p>
                     If you solve a non-Jank Hole module on the bomb after entering the correct letter for the binary grid

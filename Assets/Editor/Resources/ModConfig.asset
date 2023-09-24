@@ -14,7 +14,7 @@ MonoBehaviour:
   id: jankHole
   title: Jank Hole
   author: _Play_
-  description: 'FLAVOR TEXT
+  description: 'Holeker.
 
 
     Jank Hole!
@@ -23,4 +23,4 @@ MonoBehaviour:
     Developed by _Play_.'
   version: 1
   outputFolder: build
-  previewImage: {fileID: 0}
+  previewImage: {fileID: 2800000, guid: 7f8c9c446086253418c537ac4a8bc431, type: 3}

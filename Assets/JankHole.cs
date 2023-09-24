@@ -780,4 +780,18 @@ public class JankHole : MonoBehaviour
             }
         }
     }
+
+    IEnumerator TwitchHandleForcedSolve()
+    {
+        yield return null;
+        while (SolutionCode.Length > 0)
+        {
+            yield return new WaitUntil(() => colorSequenceBreak);
+            if (SolutionCode.Length > 0)
+            {
+                StartCoroutine(ProcessTwitchCommand(LetterToGesture(SolutionCode[0].ToString())));
+                yield return new WaitForSeconds(3f);
+            }
+        }
+    }
 }
