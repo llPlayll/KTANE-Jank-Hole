@@ -49,15 +49,11 @@
                     First, using the serial number, find the goal letters X, Y and Z.
                 </p>
 
-                <p>
-                    <ul><li>If there are two letters in the serial number: 
-                    <ul><li>The first two letters of the serial number are X and Y, to find Z, take the absolute difference between X and Y, then divide it by 2, if there are more unlit indicators than lit indicators, round down, otherwise, round up. Then convert the result into a letter using alphabetic position, it will be letter Z.</ul></li></ul></li></p>
-               <p>
-                    <ul><li>If there are three letters in the serial number:
-                    <ul><li>The serial number letters are going to be X, Y and Z.</ul></li></ul></li></p>
-                <p>
-                    <ul><li>If there are four letters in the serial number:
-                    <ul><li>Find the absolute difference between the 1st and 2nd letter of serial number, 2nd and 3rd, 3rd and 4th. Convert the results into letters using alphabetic position, in order the letters are going to be X, Y and Z.</ul></li></ul></li></p>
+                <ul><li>If there are two letters in the serial number:<ul><li>The first two letters of the serial number are X and Y, to find Z, take the absolute difference between X and Y, then divide it by 2, if there are more unlit indicators than lit indicators, round down, otherwise, round up. Then convert the result into a letter using alphabetic position, it will be letter Z.</li></ul></li></ul>
+
+                <ul><li>If there are three letters in the serial number:<ul><li>The serial number letters are going to be X, Y and Z.</li></ul></li></ul>
+
+                <ul><li>If there are four letters in the serial number:<ul><li>Find the absolute difference between the 1st and 2nd letter of serial number, 2nd and 3rd, 3rd and 4th. Convert the results into letters using alphabetic position, in order the letters are going to be X, Y and Z.</li></ul></li></ul>
                 
                 <p>
                     Then, figure out the two keys: <b>Key A</b> and <b>Key B</b>, using the color sequence and the table below.
@@ -119,9 +115,9 @@
                 </table>
                 <p>
                     After figuring out <b>Key A</b> and <b>Key B</b>, for each of the keys:
-                    <ul><li>Append the alphabet to the key.</li></ul>
-                    <ul><li>If there are duplicate letters, only keep the first occurrences.</li></ul>
                 </p>
+                <ul><li>Append the alphabet to the key.</li></ul>
+                <ul><li>If there are duplicate letters, only keep the first occurrences.</li></ul>
             </div>
             <div class="page-footer relative-footer">2</div>
         </div>
@@ -144,10 +140,10 @@
                 <p>
                     Take your goal letters and split them into three rows, then translate each letter into morse code.
                     Then, convert each morse into binary where:
+                </p>
                     <ul><li>A dash is represented by "111".</li></ul>
                     <ul><li>A dot is represented by "1".</li></ul>
                     <ul><li>A space between each dot and dash character is represented by "0".</li></ul>
-                </p>
                 <p>
                     If there is a row that is shorter than the others, append 0s to that row until it reaches the length of the longest row.
                 </p>
@@ -197,7 +193,7 @@
                     the amount of numbers that need to be entered will be shortened by 3 (so, next 3 digits of the binary grid will be skipped),
                     unless the code is currently 3 or less characters long, in which case you will have to enter the last letter of the code.
                 </p>
-                <img src="img/morse-letters.svg" class="centered-img"> <!--Should be replaced with the svg from Morse Mar-->
+                <img src="img/Jank Hole/morse-letters.svg" class="centered-img"> <!--Should be replaced with the svg from Morse Mar-->
             </div>
             <div class="page-footer relative-footer">4</div>
         </div>
