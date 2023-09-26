@@ -35,6 +35,7 @@ public class JankHole : MonoBehaviour
     List<string> OnesGrid = new List<string>() { "", "", "" };
     int[] colorIndexesArray = new int[10];
 
+    bool isHolding;
     string input;
     int digitsEntered;
 
@@ -71,8 +72,12 @@ public class JankHole : MonoBehaviour
         {
             return;
         }
-        JankHoleSelectable.AddInteractionPunch();
-        input += "[";
+        if (!isHolding)
+        {
+            JankHoleSelectable.AddInteractionPunch();
+            input += "[";
+            isHolding = true;
+        }
     }
 
     void HoleOnInteractEnded()
@@ -81,8 +86,12 @@ public class JankHole : MonoBehaviour
         {
             return;
         }
-        JankHoleSelectable.AddInteractionPunch();
-        input += "]";
+        if (isHolding)
+        {
+            JankHoleSelectable.AddInteractionPunch();
+            input += "]";
+            isHolding = false;
+        }
     }
 
     void CalculateGoalLetters()
@@ -691,10 +700,19 @@ public class JankHole : MonoBehaviour
             ColorBlindText.text = "";
             if (!String.IsNullOrEmpty(input))
             {
-                input = input.Trim('p');
-                Log($"Submitted {input}, checking submission.");
-                checkInput();
-                input = "";
+                if (isHolding)
+                {
+                    Log("The hole is still held on the break, clearing input and forcing a release.");
+                    input = "";
+                    isHolding = false;
+                }
+                else
+                {
+                    input = input.Trim('p');
+                    Log($"Submitted {input}, checking submission.");
+                    checkInput();
+                    input = "";
+                }
             }
             yield return new WaitForSeconds(2);
             InputText.text = "";
@@ -733,6 +751,7 @@ public class JankHole : MonoBehaviour
 
     IEnumerator ProcessTwitchCommand(string Command)
     {
+        Command = Command.ToLowerInvariant();
         if (Command.Replace("p", "").Replace("[", "").Replace("]", "") != "")
         {
             yield return "sendtochaterror Invalid command!";
@@ -759,6 +778,33 @@ public class JankHole : MonoBehaviour
         if (Command.Count(p => p == 'p') > 10)
         {
             yield return "sendtochaterror Invalid gesture: too many color switches!";
+        }
+
+        bool tpCommandIsHolding = false;
+        for (int i = 0; i < Command.Length; i++)
+        {
+            if (Command[i] == '[')
+            {
+                if (tpCommandIsHolding)
+                {
+                    yield return "sendtochaterror Invalid gesture: a hold inside of another hold!";
+                }
+                else
+                {
+                    tpCommandIsHolding = true;
+                }
+            }
+            else if (Command[i] == ']')
+            {
+                if (!tpCommandIsHolding)
+                {
+                    yield return "sendtochaterror Invalid gesture: a release without a hold!";
+                }
+                else
+                {
+                    tpCommandIsHolding = false;
+                }
+            }
         }
 
         yield return null;
