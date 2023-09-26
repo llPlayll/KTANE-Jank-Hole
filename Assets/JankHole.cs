@@ -655,6 +655,8 @@ public class JankHole : MonoBehaviour
                     Module.HandlePass();
                     StopCoroutine("ColorCycle");
                     InputText.text = "";
+                    HoleRenderer.material = JankHoleMaterials[1];
+                    ColorBlindText.text = "!";
                 }
             }
             else
@@ -718,7 +720,7 @@ public class JankHole : MonoBehaviour
                 }
                 else
                 {
-                    digitsEntered += 3 - (SolutionCode.Length - 1);
+                    digitsEntered += SolutionCode.Length - 1;
                     SolutionCode = SolutionCode.Substring(SolutionCode.Length - 1);
                     Log($"A module has been solved in between entering letters, skipping to the last letter as the solution code is less than 3 letters long, new solution code is {SolutionCode}");
                 }
