@@ -9,13 +9,9 @@
     <link rel="stylesheet" type="text/css" href="css/main.css">
     <script src="js/ktane-utils.js"></script>
     <style>
-        .dark table, table {
-            margin: 1em auto;
-            border: none;
-        }
-        .dark .centered-img { filter: invert(90%); }
         .page-footer::before { content: 'Page '; }
         .page-footer::after { content: ' of 4'; }
+        .dark .centered-img { filter: invert(80%); }
     </style>
 </head>
 <body>
@@ -26,7 +22,7 @@
                 <span class="page-header-section-title">Jank Hole</span>
             </div>
             <div class="page-content">
-                <img src="img/Component/Black Hole.svg" class="diagram"> <!--Should be replaced with the actual BH svg as there is no real visual diferrence between this module and BH.-->
+                <img src="img/Component/Black Hole.svg" class="diagram">
                 <h2>On the Subject of Jank Hole</h2>
                 <p class="flavour-text">Holeker.</p>
 
@@ -36,23 +32,17 @@
                     There will be a pause between the start and the end of the sequence, where a swamp green color will be shown.
                 </p>
                 
-                <p>
-                    To solve the module, obtain a code consisting of letters A-Z.
-                </p>
+                <p>To solve the module, obtain a code consisting of letters A-Z.</p>
 
                 <p>
                     In this module, when doing operations with letters, use their alphabetic positions, where Z = 0, A = 1, B = 2... Y = 25,
                     same with converting numbers to letters.
                 </p>
 
-                <p>
-                    First, using the serial number, find the goal letters X, Y and Z.
-                </p>
+                <p>First, using the serial number, find the goal letters X, Y and Z.</p>
 
                 <ul><li>If there are two letters in the serial number:<ul><li>The first two letters of the serial number are X and Y, to find Z, take the absolute difference between X and Y, then divide it by 2, if there are more unlit indicators than lit indicators, round down, otherwise, round up. Then convert the result into a letter using alphabetic position, it will be letter Z.</li></ul></li></ul>
-
                 <ul><li>If there are three letters in the serial number:<ul><li>The serial number letters are going to be X, Y and Z.</li></ul></li></ul>
-
                 <ul><li>If there are four letters in the serial number:<ul><li>Find the absolute difference between the 1st and 2nd letter of serial number, 2nd and 3rd, 3rd and 4th. Convert the results into letters using alphabetic position, in order the letters are going to be X, Y and Z.</li></ul></li></ul>
                 
                 <p>
@@ -72,14 +62,10 @@
             </div>
             <div class="page-content">
                 <table>
-                    <tr>
-                        <th>Color\Key</th>
-                        <th><b>Key A</b></th>
-                        <th><b>Key B</b></th>
-                    </tr>
+                    <tr><th>Color\Key</th><th><b>Key A</b></th><th><b>Key B</b></th></tr>
                     <tr>
                         <td>Red</td>
-                        <td>If last digit of the serial number is even, append "EVEN" to <b>Key A</b>, otherwise append "ODD" to <b>Key A</b>.</td>
+                        <td>If last digit of the serial number is even, append “EVEN” to <b>Key A</b>, otherwise append “ODD” to <b>Key A</b>.</td>
                         <td>Reverse <b>Key B</b>.</td>
                     </tr>
                     <tr>
@@ -116,8 +102,10 @@
                 <p>
                     After figuring out <b>Key A</b> and <b>Key B</b>, for each of the keys:
                 </p>
-                <ul><li>Append the alphabet to the key.</li></ul>
-                <ul><li>If there are duplicate letters, only keep the first occurrences.</li></ul>
+                <ul>
+                    <li>Append the alphabet to the key.</li>
+                    <li>If there are duplicate letters, only keep the first occurrences.</li>
+                </ul>
             </div>
             <div class="page-footer relative-footer">2</div>
         </div>
@@ -131,23 +119,22 @@
                 <p>
                     Then, go through both of the keys left to right at the same time.
                     If the current letters from both of the keys are the same,
-                    add 1 to <b>Key B</b>'s letter at the current position, looping back to Z at 26.
+                    add 1 to <b>Key B</b>’s letter at the current position, looping back to Z at 26.
                     These are your final <b>Key A</b> and <b>Key B</b>.
                 </p>
-                <p>
-                    Next, use your goal letters to create a binary grid, which will always have 3 rows.
-                </p>
+                <p>Next, use your goal letters to create a binary grid, which will always have 3 rows.</p>
                 <p>
                     Take your goal letters and split them into three rows, then translate each letter into morse code.
                     Then, convert each morse into binary where:
                 </p>
-                    <ul><li>A dash is represented by "111".</li></ul>
-                    <ul><li>A dot is represented by "1".</li></ul>
-                    <ul><li>A space between each dot and dash character is represented by "0".</li></ul>
+                <ul>
+                    <li>A dash is represented by “111”.</li>
+                    <li>A dot is represented by “1”.</li>
+                    <li>A space between each dot and dash character is represented by “0”.</li>
+                </ul>
+                <p>If there is a row that is shorter than the others, append 0s to that row until it reaches the length of the longest row.</p>
                 <p>
-                    If there is a row that is shorter than the others, append 0s to that row until it reaches the length of the longest row.
-                </p>
-                <p>Then, create a zeros grid and a ones grid in the paragraph below using the Keys you made,
+                    Then, create a zeros grid and a ones grid in the paragraph below using the Keys you made,
                     where <b>Key A</b> will be used to make the zeros grid and <b>Key B</b> will be used to make the ones grid.
                 </p>
                 <p>
@@ -156,21 +143,13 @@
                 </p>
                 <p>
                     The Jank Hole will submit letters in braille reading order (Going through each column top to bottom, left to right).
-                    Refer to <a href="https://ktane.timwi.de/HTML/Supermassive%20Black%20Hole.html#bhAB-table">"Appendix - BHSCII Table"</a> for how to enter letters.
-                    In the table,
-                    a dot means a color switch in the sequence,
-                    a vertical line line means that you need to press and immediately release the hole,
-                    and square brackets mean holding the hole for one or more color switches. 
-                    Your input will be automatically submitted in the pause between the start and the end of the sequence, 
-                    and the letter that was inputted will be shown.
-                    If it's not a valid letter, a "?" will be shown.
+                    Refer to <a href="https://ktane.timwi.de/HTML/Supermassive%20Black%20Hole.html#bhAB-table">“Appendix - BHSCII Table”</a> for how to enter letters.
+                    In the table, a dot means a color switch in the sequence,
+                    a vertical line line means that you need to press and immediately release the hole, and square brackets mean holding the hole for one or more color switches. 
+                    Your input will be automatically submitted in the pause between the start and the end of the sequence, and the letter that was inputted will be shown. If it’s not a valid letter, a “?” will be shown.
                     The [ppp] gesture (a hold for 3 color switches) will display the number of entered letters in the pause, accounting for the skipped letters
                     (If you do the [ppp] gesture after entering one letter and solving one module, 4 will be displayed).
-                </p>
-                <p>
-                    Submitting the letter at the current position in the zeros grid will submit a zero,
-                    and submitting the letter at the current position in the ones grid will submit a one,
-                    while submitting a letter which is from neither of the grids at the current position will make the module strike.
+                    Holding the hole before and until the sequence break will not submit your input and will clear it, which can be used if the defuser is unsure of their submission.
                 </p>
             </div>
             <div class="page-footer relative-footer">3</div>
@@ -181,6 +160,11 @@
                 <span class="page-header-section-title">Jank Hole</span>
             </div>
             <div class="page-content">
+                <p>
+                    Submitting the letter at the current position in the zeros grid will submit a zero,
+                    and submitting the letter at the current position in the ones grid will submit a one,
+                    while submitting a letter which is from neither of the grids at the current position will make the module strike.
+                </p>
                 <p>
                     Submit letters to recreate the binary grid.
                     Submitting a 1 while the number at the current position in the binary grid is a 0, and vice versa,
@@ -193,7 +177,7 @@
                     the amount of numbers that need to be entered will be shortened by 3 (so, next 3 digits of the binary grid will be skipped),
                     unless the code is currently 3 or less characters long, in which case you will have to enter the last letter of the code.
                 </p>
-                <img src="img/Jank Hole/morse-letters.svg" class="centered-img"> <!--Should be replaced with the svg from Morse Mar-->
+                <img src="img/Morse Code/morse-letters.svg" class="centered-img">
             </div>
             <div class="page-footer relative-footer">4</div>
         </div>
