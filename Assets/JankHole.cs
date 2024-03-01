@@ -746,85 +746,92 @@ public class JankHole : MonoBehaviour
         }
     }
 #pragma warning disable 414
-    private readonly string TwitchHelpMessage = @"Use !{0} [/p/] to execute a gesture, where a [ is a press, a p is waiting for a color switch, and ] is a release.";
+    private readonly string TwitchHelpMessage = @"Use !{0} [/p/] to execute a gesture, where a [ is a press, a p is waiting for a color switch, and ] is a release. !{0} cb to toggle colourblind mode.";
 #pragma warning restore 414
 
     IEnumerator ProcessTwitchCommand(string Command)
     {
         Command = Command.ToLowerInvariant();
-        if (Command.Replace("p", "").Replace("[", "").Replace("]", "") != "")
+        if (Command == "cb")
+        {
+            yield return null;
+            ColorBlindText.gameObject.SetActive(!ColorBlindText.gameObject.activeSelf);
+        }
+        else if (Command.Replace("p", "").Replace("[", "").Replace("]", "") != "")
         {
             yield return "sendtochaterror Invalid command!";
         }
-
-        int squareBrackets = 0;
-        for (int i = 0; i < Command.Length; i++)
+        else
         {
-            if (Command[i] == '[')
+            int squareBrackets = 0;
+            for (int i = 0; i < Command.Length; i++)
             {
-                squareBrackets++;
-            }
-            else if (Command[i] == ']')
-            {
-                squareBrackets--;
-            }
-        }
-        if (squareBrackets != 0)
-        {
-            yield return "sendtochaterror Invalid gesture: more holds than releases / more releases than holds!";
-        }
-
-        Command = Command.TrimStart('p').TrimEnd('p');
-        if (Command.Count(p => p == 'p') > 10)
-        {
-            yield return "sendtochaterror Invalid gesture: too many color switches!";
-        }
-
-        bool tpCommandIsHolding = false;
-        for (int i = 0; i < Command.Length; i++)
-        {
-            if (Command[i] == '[')
-            {
-                if (tpCommandIsHolding)
+                if (Command[i] == '[')
                 {
-                    yield return "sendtochaterror Invalid gesture: a hold inside of another hold!";
+                    squareBrackets++;
                 }
-                else
+                else if (Command[i] == ']')
                 {
-                    tpCommandIsHolding = true;
+                    squareBrackets--;
                 }
             }
-            else if (Command[i] == ']')
+            if (squareBrackets != 0)
             {
-                if (!tpCommandIsHolding)
+                yield return "sendtochaterror Invalid gesture: more holds than releases / more releases than holds!";
+            }
+
+            Command = Command.TrimStart('p').TrimEnd('p');
+            if (Command.Count(p => p == 'p') > 10)
+            {
+                yield return "sendtochaterror Invalid gesture: too many color switches!";
+            }
+
+            bool tpCommandIsHolding = false;
+            for (int i = 0; i < Command.Length; i++)
+            {
+                if (Command[i] == '[')
                 {
-                    yield return "sendtochaterror Invalid gesture: a release without a hold!";
+                    if (tpCommandIsHolding)
+                    {
+                        yield return "sendtochaterror Invalid gesture: a hold inside of another hold!";
+                    }
+                    else
+                    {
+                        tpCommandIsHolding = true;
+                    }
                 }
-                else
+                else if (Command[i] == ']')
                 {
-                    tpCommandIsHolding = false;
+                    if (!tpCommandIsHolding)
+                    {
+                        yield return "sendtochaterror Invalid gesture: a release without a hold!";
+                    }
+                    else
+                    {
+                        tpCommandIsHolding = false;
+                    }
                 }
             }
-        }
 
-        yield return null;
-        yield return new WaitUntil(() => colorSequenceBreak);
-        for (int i = 0; i < Command.Length; i++)
-        {
-            switch (Command[i].ToString())
+            yield return null;
+            yield return new WaitUntil(() => colorSequenceBreak);
+            for (int i = 0; i < Command.Length; i++)
             {
-                case "[":
-                    JankHoleSelectable.OnInteract();
-                    break;
-                case "]":
-                    JankHoleSelectable.OnInteractEnded();
-                    break;
-                case "p":
-                    int startIdx = globalColorSequenceIdx;
-                    yield return new WaitUntil(() => startIdx != globalColorSequenceIdx);
-                    break;
-                default:
-                    break;
+                switch (Command[i].ToString())
+                {
+                    case "[":
+                        JankHoleSelectable.OnInteract();
+                        break;
+                    case "]":
+                        JankHoleSelectable.OnInteractEnded();
+                        break;
+                    case "p":
+                        int startIdx = globalColorSequenceIdx;
+                        yield return new WaitUntil(() => startIdx != globalColorSequenceIdx);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     }
