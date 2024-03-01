@@ -21,6 +21,6 @@ MonoBehaviour:
 
 
     Developed by _Play_.'
-  version: 1
+  version: 1.01
   outputFolder: build
   previewImage: {fileID: 2800000, guid: 7f8c9c446086253418c537ac4a8bc431, type: 3}
