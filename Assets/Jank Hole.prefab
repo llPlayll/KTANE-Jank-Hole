@@ -794,6 +794,7 @@ MonoBehaviour:
   Module: {fileID: 114995594557840216}
   Bomb: {fileID: 114775928236504846}
   Colorblind: {fileID: 114420948465094500}
+  JankHoleObject: {fileID: 1818141624053760}
   JankHoleSelectable: {fileID: 114119055406750472}
   HoleRenderer: {fileID: 23181676091067148}
   ColorBlindText: {fileID: 102463164211366264}

@@ -12,6 +12,7 @@ public class JankHole : MonoBehaviour
     [SerializeField] private KMBombInfo Bomb;
     [SerializeField] private KMColorblindMode Colorblind;
 
+    [SerializeField] private GameObject JankHoleObject;
     [SerializeField] private KMSelectable JankHoleSelectable;
     [SerializeField] private MeshRenderer HoleRenderer;
     [SerializeField] private TextMesh ColorBlindText;
@@ -42,6 +43,7 @@ public class JankHole : MonoBehaviour
     private int lastSolved;
     bool isReadyForSkip;
 
+    float cycleWaitTime = 2;
     bool colorSequenceBreak;
     bool TPCommandOver;
     int globalColorSequenceIdx;
@@ -119,9 +121,9 @@ public class JankHole : MonoBehaviour
                 Z = serialNumberLetters[2].ToString();
                 break;
             case 4:
-                X = alphabet[Math.Abs(serialNumberLetters[0] - serialNumberLetters[1])].ToString();
-                Y = alphabet[Math.Abs(serialNumberLetters[1] - serialNumberLetters[2])].ToString();
-                Z = alphabet[Math.Abs(serialNumberLetters[2] - serialNumberLetters[3])].ToString();
+                X = alphabet[Math.Abs(alphabet.IndexOf(serialNumberLetters[0]) - alphabet.IndexOf(serialNumberLetters[1]))].ToString();
+                Y = alphabet[Math.Abs(alphabet.IndexOf(serialNumberLetters[1]) - alphabet.IndexOf(serialNumberLetters[2]))].ToString();
+                Z = alphabet[Math.Abs(alphabet.IndexOf(serialNumberLetters[2]) - alphabet.IndexOf(serialNumberLetters[3]))].ToString();
                 break;
             default:
                 break;
@@ -693,7 +695,7 @@ public class JankHole : MonoBehaviour
                 {
                     input += "p";
                 }
-                yield return new WaitForSeconds(1);
+                yield return new WaitForSeconds(cycleWaitTime);
             }
             colorSequenceBreak = true;
             HoleRenderer.material = JankHoleMaterials[7];
@@ -714,7 +716,7 @@ public class JankHole : MonoBehaviour
                     input = "";
                 }
             }
-            yield return new WaitForSeconds(2);
+            yield return new WaitForSeconds(cycleWaitTime);
             InputText.text = "";
             colorSequenceBreak = false;
         }
@@ -839,14 +841,31 @@ public class JankHole : MonoBehaviour
     IEnumerator TwitchHandleForcedSolve()
     {
         yield return null;
+        cycleWaitTime = 0.25f;
+        StartCoroutine("Tremble");
         while (SolutionCode.Length > 0)
         {
             yield return new WaitUntil(() => colorSequenceBreak);
             if (SolutionCode.Length > 0)
             {
                 StartCoroutine(ProcessTwitchCommand(LetterToGesture(SolutionCode[0].ToString())));
-                yield return new WaitForSeconds(3f);
+                yield return new WaitForSeconds(2f);
             }
         }
+    }
+
+    IEnumerator Tremble()
+    {
+        yield return null;
+        int trembleFrame = 2;
+        List<float> trembleXS = new List<float>() { 0.002f, -0.002f, 0.001f };
+        Vector3 preTremblePos = JankHoleObject.gameObject.transform.position;
+        while (!ModuleSolved)
+        {
+            JankHoleObject.gameObject.transform.position += new Vector3(trembleXS[trembleFrame], 0, 0);
+            trembleFrame = (trembleFrame % 2 + 1) % 2;
+            yield return new WaitForSeconds(0.05f);
+        }
+        JankHoleObject.gameObject.transform.position = preTremblePos;
     }
 }
