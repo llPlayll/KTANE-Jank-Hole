@@ -27,6 +27,7 @@ public class JankHole : MonoBehaviour
     string alphabet = "ZABCDEFGHIJKLMNOPQRSTUVWXY";
     List<string> shortColorNames = new List<string> { "R", "G", "B", "C", "M", "Y", "W" };
     List<string> fullColorNames = new List<string> { "Red", "Green", "Blue", "Cyan", "Magenta", "Yellow", "White" };
+    List<float> interPunchStrengths = new List<float> { 0.5f, 0.5f, 1f, 1f, 1f, 1f, 1f, 1f, 2.5f, 2.5f, 5f, 6.5f, 8f };
 
     string X, Y, Z;
     string KeyA, KeyB;
@@ -46,7 +47,7 @@ public class JankHole : MonoBehaviour
     float cycleWaitTime = 2;
     bool colorSequenceBreak;
     bool TPCommandOver;
-    int globalColorSequenceIdx;
+    int globalColorSequenceIdx = -1;
 
     void Awake()
     {
@@ -76,7 +77,7 @@ public class JankHole : MonoBehaviour
         }
         if (!isHolding)
         {
-            JankHoleSelectable.AddInteractionPunch();
+            JankHoleSelectable.AddInteractionPunch(interPunchStrengths.PickRandom());
             input += "[";
             isHolding = true;
         }
@@ -90,7 +91,7 @@ public class JankHole : MonoBehaviour
         }
         if (isHolding)
         {
-            JankHoleSelectable.AddInteractionPunch();
+            JankHoleSelectable.AddInteractionPunch(interPunchStrengths.PickRandom());
             input += "]";
             isHolding = false;
         }
@@ -686,40 +687,54 @@ public class JankHole : MonoBehaviour
     {
         while (true)
         {
-            for (int i = 0; i < colorIndexesArray.Length; ++i)
+            globalColorSequenceIdx++;
+            globalColorSequenceIdx %= 11;
+            if (globalColorSequenceIdx == 10)
             {
-                globalColorSequenceIdx = i;
-                HoleRenderer.material = JankHoleMaterials[colorIndexesArray[i]];
-                ColorBlindText.text = shortColorNames[colorIndexesArray[i]];
                 if (!String.IsNullOrEmpty(input))
                 {
-                    input += "p";
-                }
-                yield return new WaitForSeconds(cycleWaitTime);
-            }
-            colorSequenceBreak = true;
-            HoleRenderer.material = JankHoleMaterials[7];
-            ColorBlindText.text = "";
-            if (!String.IsNullOrEmpty(input))
-            {
-                if (isHolding)
-                {
-                    Log("The hole is still held on the break, clearing input and forcing a release.");
-                    input = "";
-                    isHolding = false;
+                    HoleSubmit();
                 }
                 else
                 {
-                    input = input.Trim('p');
-                    Log($"Submitted {input}, checking submission.");
-                    checkInput();
-                    input = "";
+                    colorSequenceBreak = true;
+                    HoleRenderer.material = JankHoleMaterials[7];
+                    ColorBlindText.text = "";
                 }
+                yield return new WaitForSeconds(cycleWaitTime);
+                colorSequenceBreak = false;
             }
-            yield return new WaitForSeconds(cycleWaitTime);
-            InputText.text = "";
-            colorSequenceBreak = false;
+            else
+            {
+                InputText.text = "";
+                colorSequenceBreak = false;
+                HoleRenderer.material = JankHoleMaterials[colorIndexesArray[globalColorSequenceIdx]];
+                ColorBlindText.text = shortColorNames[colorIndexesArray[globalColorSequenceIdx]];
+                if (!String.IsNullOrEmpty(input))
+                {
+                    input += "p";
+                    if (input.EndsWith("pp") & !isHolding)
+                    {
+                        HoleSubmit();
+                        globalColorSequenceIdx = 10;
+                    }
+                }
+                yield return new WaitForSeconds(cycleWaitTime);
+            }
         }
+    }
+    
+    void HoleSubmit()
+    {
+        Log(input);
+        isHolding = false;
+        colorSequenceBreak = true;
+        HoleRenderer.material = JankHoleMaterials[7];
+        ColorBlindText.text = "";
+        input = input.Trim('p');
+        Log($"Submitted {input}, checking submission.");
+        checkInput();
+        input = "";
     }
 
     private void Update()
@@ -783,6 +798,10 @@ public class JankHole : MonoBehaviour
             }
 
             Command = Command.TrimStart('p').TrimEnd('p');
+            if (String.IsNullOrEmpty(Command))
+            {
+                yield return "sendtochaterror Invalid gesture: doesn't contain any holds/releases!";
+            }
             if (Command.Count(p => p == 'p') > 10)
             {
                 yield return "sendtochaterror Invalid gesture: too many color switches!";
@@ -816,7 +835,10 @@ public class JankHole : MonoBehaviour
             }
 
             yield return null;
-            yield return new WaitUntil(() => colorSequenceBreak);
+            if (globalColorSequenceIdx > 10 - Command.Count(c => c == 'p'))
+            {
+                yield return new WaitUntil(() => colorSequenceBreak);
+            }
             for (int i = 0; i < Command.Length; i++)
             {
                 switch (Command[i].ToString())
@@ -849,7 +871,7 @@ public class JankHole : MonoBehaviour
             if (SolutionCode.Length > 0)
             {
                 StartCoroutine(ProcessTwitchCommand(LetterToGesture(SolutionCode[0].ToString())));
-                yield return new WaitForSeconds(2f);
+                yield return new WaitForSeconds(0.5f);
             }
         }
     }
@@ -859,13 +881,13 @@ public class JankHole : MonoBehaviour
         yield return null;
         int trembleFrame = 2;
         List<float> trembleXS = new List<float>() { 0.002f, -0.002f, 0.001f };
-        Vector3 preTremblePos = JankHoleObject.gameObject.transform.position;
+        Vector3 preTremblePos = JankHoleObject.gameObject.transform.localPosition;
         while (!ModuleSolved)
         {
-            JankHoleObject.gameObject.transform.position += new Vector3(trembleXS[trembleFrame], 0, 0);
+            JankHoleObject.gameObject.transform.localPosition += new Vector3(trembleXS[trembleFrame], 0, 0);
             trembleFrame = (trembleFrame % 2 + 1) % 2;
             yield return new WaitForSeconds(0.05f);
         }
-        JankHoleObject.gameObject.transform.position = preTremblePos;
+        JankHoleObject.gameObject.transform.localPosition = preTremblePos;
     }
 }
