@@ -835,7 +835,7 @@ public class JankHole : MonoBehaviour
             }
 
             yield return null;
-            if (globalColorSequenceIdx > 10 - Command.Count(c => c == 'p'))
+            if (globalColorSequenceIdx > 9 - Command.Count(c => c == 'p'))
             {
                 yield return new WaitUntil(() => colorSequenceBreak);
             }
@@ -856,6 +856,10 @@ public class JankHole : MonoBehaviour
                     default:
                         break;
                 }
+            }
+            while (!colorSequenceBreak)
+            {
+                yield return null;
             }
         }
     }
