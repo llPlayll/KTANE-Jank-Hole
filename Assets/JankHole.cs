@@ -47,6 +47,7 @@ public class JankHole : MonoBehaviour
     float cycleWaitTime = 2;
     bool colorSequenceBreak;
     bool TPCommandOver;
+    bool ForceSolved;
     int globalColorSequenceIdx = -1;
 
     void Awake()
@@ -726,7 +727,6 @@ public class JankHole : MonoBehaviour
     
     void HoleSubmit()
     {
-        Log(input);
         isHolding = false;
         colorSequenceBreak = true;
         HoleRenderer.material = JankHoleMaterials[7];
@@ -740,24 +740,27 @@ public class JankHole : MonoBehaviour
     private void Update()
     {
         DebugInputText.text = input;
-        var solvedCount = Bomb.GetSolvedModuleNames().Where(x => x != "Jank Hole").Count();
-        if (solvedCount != lastSolved)
+        if (!ForceSolved)
         {
-            lastSolved = solvedCount;
-            if (isReadyForSkip)
+            var solvedCount = Bomb.GetSolvedModuleNames().Where(x => x != "Jank Hole").Count();
+            if (solvedCount != lastSolved)
             {
-                isReadyForSkip = false;
-                if (SolutionCode.Length > 3)
+                lastSolved = solvedCount;
+                if (isReadyForSkip)
                 {
-                    digitsEntered += 3;
-                    SolutionCode = SolutionCode.Substring(3);
-                    Log($"A module has been solved in between entering letters, skipping next 3 letters, new solution code is {SolutionCode}");
-                }
-                else
-                {
-                    digitsEntered += SolutionCode.Length - 1;
-                    SolutionCode = SolutionCode.Substring(SolutionCode.Length - 1);
-                    Log($"A module has been solved in between entering letters, skipping to the last letter as the solution code is less than 3 letters long, new solution code is {SolutionCode}");
+                    isReadyForSkip = false;
+                    if (SolutionCode.Length > 3)
+                    {
+                        digitsEntered += 3;
+                        SolutionCode = SolutionCode.Substring(3);
+                        Log($"A module has been solved in between entering letters, skipping next 3 letters, new solution code is {SolutionCode}");
+                    }
+                    else
+                    {
+                        digitsEntered += SolutionCode.Length - 1;
+                        SolutionCode = SolutionCode.Substring(SolutionCode.Length - 1);
+                        Log($"A module has been solved in between entering letters, skipping to the last letter as the solution code is less than 3 letters long, new solution code is {SolutionCode}");
+                    }
                 }
             }
         }
@@ -867,6 +870,7 @@ public class JankHole : MonoBehaviour
     IEnumerator TwitchHandleForcedSolve()
     {
         yield return null;
+        ForceSolved = true;
         cycleWaitTime = 0.25f;
         StartCoroutine("Tremble");
         while (SolutionCode.Length > 0)
